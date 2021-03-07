@@ -10,14 +10,15 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:b2c-documentation-tool.helloWorld"
+		"onCommand:b2c-documentation-tool.run",
+		"onFileSystem:xml"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "b2c-documentation-tool.helloWorld",
-				"title": "Hello World"
+				"command": "b2c-documentation-tool.run",
+				"title": "B2C Documentation Tool: Run"
 			}
 		]
 	},
@@ -41,5 +42,10 @@
 		"mocha": "^8.2.1",
 		"typescript": "^4.1.3",
 		"vscode-test": "^1.5.0"
+	},
+	"dependencies": {
+		"@types/xmldom": "^0.1.30",
+		"xmldom": "^0.4.0",
+		"xpath": "0.0.32"
 	}
 }
