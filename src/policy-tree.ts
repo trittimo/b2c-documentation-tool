@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as xmldom from 'xmldom';
 import * as xpath from 'xpath';
-import { Claim, UserJourney, populateChildNodes } from './policy-nodes';
+import { Claim, UserJourney, populateChildNodes, RelyingParty, ClaimsProvider, ClaimsTransformation } from './policy-nodes';
 
 export class Policy {
 	private _node: Document;
@@ -11,6 +11,9 @@ export class Policy {
 	private _basePolicy: Policy | undefined;
 	private _claims: Array<Claim>;
 	private _userJourneys: Array<UserJourney>;
+	private _relyingParty: RelyingParty | undefined;
+	private _claimsProviders: Array<ClaimsProvider>;
+	private _claimsTransformations: Array<ClaimsTransformation>;
 	fileName: string;
 	policies: Map<string, Policy>;
 
@@ -21,6 +24,36 @@ export class Policy {
 		this.policies = policies;
 		this._claims = [];
 		this._userJourneys = [];
+		this._claimsProviders = [];
+		this._claimsTransformations = [];
+	}
+
+	get claimsTransformations(): Array<ClaimsTransformation> {
+		if (this._claimsTransformations.length === 0) {
+			let claimsTransformationsNode = this._selector("//n:TrustFrameworkPolicy/n:BuildingBlocks/n:ClaimsTransformations", this._node, true) as Element;
+			this._claimsTransformations = populateChildNodes(claimsTransformationsNode, this._selector, ClaimsTransformation);
+		}
+		return this._claimsTransformations;
+	}
+
+	get claimsProviders(): Array<ClaimsProvider> {
+		if (this._claimsProviders.length === 0) {
+			let claimsProvidersNode = this._selector("//n:TrustFrameworkPolicy/n:ClaimsProviders", this._node, true) as Element;
+			this._claimsProviders = populateChildNodes(claimsProvidersNode, this._selector, ClaimsProvider);
+		}
+		return this._claimsProviders;
+	}
+
+	get relyingParty(): RelyingParty | undefined {
+		if (!this._relyingParty) {
+			let relyingPartyNode = this._selector("//n:TrustFrameworkPolicy/n:RelyingParty", this._node, true) as Element;
+			if (!relyingPartyNode) {
+				return this._relyingParty;
+			}
+			this._relyingParty = new RelyingParty();
+			this._relyingParty.populate(relyingPartyNode, this._selector);
+		}
+		return this._relyingParty;
 	}
 
 	get policyId(): string | undefined | null {

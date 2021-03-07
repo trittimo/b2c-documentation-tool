@@ -15,11 +15,12 @@ export class Documenter {
 		if (vscode.workspace.rootPath) {
 			let files = util.walk(vscode.workspace.rootPath, this.config.include, this.config.exclude);
 			let tree = PolicyTree.fromFiles(files);
-			let extensions = tree.policies.get("B2C_1A_TrustFrameworkExtensions{Settings:ENV_TAG}");
-			if (extensions) {
-				console.log(extensions.claims);
-			} else {
-				console.log(`Could not load extensions`);
+			for (let key of tree.policies.keys()) {
+				let policy = tree.policies.get(key);
+				if (!policy) continue;
+				console.log(key);
+				console.log(policy.claimsTransformations);
+				console.log("===");
 			}
 		}
 	}
