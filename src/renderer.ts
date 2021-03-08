@@ -72,6 +72,7 @@ function addPsuedoCode(policy: Policy) {
 					code += "not ";
 				}
 
+				let includedNewline = false;
 				if (precondition.type === "ClaimsExist") {
 					code += precondition.values[0] + " exists";
 				} else {
@@ -82,24 +83,29 @@ function addPsuedoCode(policy: Policy) {
 					let currentLineLen = lines[lines.length - 1].length;
 					console.log(currentLineLen);
 					code += " // " + precondition.comments[0] + "\n";
+					includedNewline = true;
 					for (let j = 1; j < precondition.comments.length; j++) {
 						code += "&ensp;".repeat(currentLineLen);
 						code += " // " + precondition.comments[j] + "\n\n";
 					}
 				} else if (precondition.comments.length === 1) {
 					code += " // " + precondition.comments[0] + "\n";
+					includedNewline = true;
 				}
 				
 				if (step.preconditions.length === 1) {
-					code += "then skip step";
+					code += " then skip step";
 				} else if ((i + 1) === step.preconditions.length) {
 					if (precondition.comments.length > 0) {
-						code += "then skip step";
+						code += " then skip step";
 					} else {
 						code += "\nthen skip step";
 					}
 				} else {
-					code += "&ensp;&ensp;&ensp;and ";
+					if (!includedNewline) {
+						code += "\n";
+					}
+					code += "&ensp;&ensp;&ensp;or ";
 				}
 			}
 			(step as any)["pseudoCode"] = code;
