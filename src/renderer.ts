@@ -4,6 +4,7 @@ import { Configuration } from './configuration';
 import { PolicyMap, Policy } from './policy-map';
 import * as handlebars from 'handlebars';
 import * as path from 'path';
+import { UserJourney } from './policy-nodes';
 
 
 type PathResolver = (file: string) => string;
@@ -51,8 +52,51 @@ function mapGet(this: any, map: Map<string, any>, key: string) {
 	}
 }
 
+function addPsuedoCode(policy: Policy) {
+	if (!policy.userJourneys) {
+		return;
+	}
+
+	for (let journey of policy.userJourneys) {
+		if (!journey.orchestrationSteps) {
+			continue;
+		}
+		for (let step of journey.orchestrationSteps) {
+			let code = "if ";
+			if (!step.preconditions) {
+				continue;
+			}
+			for (let i = 0; i < step.preconditions.length; i++) {
+				let precondition = step.preconditions[i];
+				if (i !== 0) {
+					code += "&emsp;";
+				}
+
+				if (precondition.executeActionsIf !== "true") {
+					code += "not ";
+				}
+
+				if (precondition.type === "ClaimsExist") {
+					code += precondition.values[0] + " exists";
+				} else {
+					code += precondition.values[0] + " ==" + precondition.values[1];
+				}
+				if (step.preconditions.length === 1) {
+					code += " then skip step";
+				} else if ((i + 1) === step.preconditions.length) {
+					code += "\nthen skip step";
+				} else {
+					code += " and\n";
+				}
+			}
+			(step as any)["pseudoCode"] = code;
+		}
+	}
+}
+
 function addDataHelpers(policy: any) {
 	policy["safeId"] = idPrettify(policy.policyId);
+	addPsuedoCode(policy);
 }
 
 function mapIterKeys(this: any, map: Map<string, any>) {

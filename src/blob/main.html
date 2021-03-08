@@ -38,25 +38,24 @@
       </nav>
 
       <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 h-100 p-0">
-        <div class="policyDocsContainer mx-auto w-50 p-3">
+        <div class="policyDocsContainer mx-auto w-75 p-3">
           {{#each policies}}
           <div class="policyDoc">
             <h3><a href="#" id="{{idPrettify (indexer 'policyId')}}" class="link-secondary">{{idPrettify (indexer 'policyId')}}</a></h3>
             <hr>
             {{#if basePolicy}}
-            <h5>Base: <code>{{basePolicy.safeId}}</code></h5>
-            {{else}}
-            <h5>No base defined</h5>
+            <h5>Base: <a href="#{{basePolicy.safeId}}">{{basePolicy.safeId}}</a></h5>
             {{/if}}
             {{#if userJourneys}}
             <h5>User journeys</h5>
             {{#each userJourneys}}
             <b>{{id}}</b>
             <table class="table text-break text-wrap table-hover">
-              <thead class="text-wrap">
+              <thead class="text-nowrap">
                 <tr>
                   <th scope="col">Step</th>
-                  <th scope="col">Comments</th>
+                  <th scope="col" class="w-50">Comments</th>
+                  <th scope="col">Technical Profiles</th>
                 </tr>
               </thead>
               <tbody>
@@ -66,6 +65,11 @@
                   <td>
                     {{#each comments}}
                     {{this}}<br>
+                    {{/each}}
+                  </td>
+                  <td>
+                    {{#each claimsExchanges}}
+                    {{technicalProfileReferenceId}}
                     {{/each}}
                   </td>
                 </tr>
@@ -81,6 +85,13 @@
                         <b>Comments</b>
                         <hr>
                         <code style="white-space: pre-line;">{{#each comments}}{{this}}<br><br>{{/each}}</code>
+                        {{/if}}
+                        {{#if preconditions}}
+                        <b>Preconditions</b>
+                        <hr>
+                        <pre><code style="white-space: pre-line;">{{{pseudoCode}}}</code></pre>
+                        {{else}}
+                        <b>No preconditions (always executes)</b><br><br>
                         {{/if}}
                       </div>
                     </div>
