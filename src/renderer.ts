@@ -68,10 +68,6 @@ function addPsuedoCode(policy: Policy) {
 			}
 			for (let i = 0; i < step.preconditions.length; i++) {
 				let precondition = step.preconditions[i];
-				if (i !== 0) {
-					code += "&emsp;";
-				}
-
 				if (precondition.executeActionsIf !== "true") {
 					code += "not ";
 				}
@@ -79,14 +75,31 @@ function addPsuedoCode(policy: Policy) {
 				if (precondition.type === "ClaimsExist") {
 					code += precondition.values[0] + " exists";
 				} else {
-					code += precondition.values[0] + " ==" + precondition.values[1];
+					code += precondition.values[0] + " == " + precondition.values[1];
 				}
+				if (precondition.comments.length > 1) {
+					let lines = code.split("\n");
+					let currentLineLen = lines[lines.length - 1].length;
+					console.log(currentLineLen);
+					code += " // " + precondition.comments[0] + "\n";
+					for (let j = 1; j < precondition.comments.length; j++) {
+						code += "&ensp;".repeat(currentLineLen);
+						code += " // " + precondition.comments[j] + "\n\n";
+					}
+				} else if (precondition.comments.length === 1) {
+					code += " // " + precondition.comments[0] + "\n";
+				}
+				
 				if (step.preconditions.length === 1) {
-					code += " then skip step";
+					code += "then skip step";
 				} else if ((i + 1) === step.preconditions.length) {
-					code += "\nthen skip step";
+					if (precondition.comments.length > 0) {
+						code += "then skip step";
+					} else {
+						code += "\nthen skip step";
+					}
 				} else {
-					code += " and\n";
+					code += "&ensp;&ensp;&ensp;and ";
 				}
 			}
 			(step as any)["pseudoCode"] = code;

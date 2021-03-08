@@ -60,7 +60,7 @@
               </thead>
               <tbody>
                 {{#each orchestrationSteps}}
-                <tr style="cursor: pointer" data-bs-toggle="modal" onclick="showModal('{{../safeId}}{{@index}}OrchestrationStepsModal')">
+                <tr style="cursor: pointer" data-bs-toggle="modal" onclick="showModal('{{../../safeId}}{{@index}}OrchestrationStepsModal')">
                   <th scope="row" class="text-nowrap">{{@index}}</th>
                   <td>
                     {{#each comments}}
@@ -73,11 +73,11 @@
                     {{/each}}
                   </td>
                 </tr>
-                <div class="modal fade" id="{{../safeId}}{{@index}}OrchestrationStepsModal" tabindex="-1" aria-labelledby="{{../safeId}}{{@index}}OrchestrationStepsModalLabel" aria-hidden="true">
-                  <div class="modal-dialog">
+                <div class="modal fade show" id="{{../../safeId}}{{@index}}OrchestrationStepsModal" tabindex="-1" aria-labelledby="{{../../safeId}}{{@index}}OrchestrationStepsModalLabel" aria-hidden="true">
+                  <div class="modal-fullscreen modal-dialog">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title" id="{{../safeId}}{{@index}}OrchestrationStepsModalLabel">Additional properties for step {{@index}}</h5>
+                        <h5 class="modal-title" id="{{../../safeId}}{{@index}}OrchestrationStepsModalLabel">Additional properties for step {{@index}}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       <div class="modal-body">
@@ -160,11 +160,16 @@
   <script>
     feather.replace()
   </script>
+  <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
   <script>
     function showModal(modalId) {
       let modal = new bootstrap.Modal(document.getElementById(modalId));
       modal.show();
     }
+
+    $(window).on('load', function(){
+      $('.modal.fade').appendTo('body');
+    })
   </script>
 </body>
 
