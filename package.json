@@ -45,7 +45,7 @@
 	},
 	"dependencies": {
 		"@types/xmldom": "^0.1.30",
-		"es6-template-strings": "^2.0.1",
+		"handlebars": "^4.7.7",
 		"xmldom": "^0.4.0",
 		"xpath": "0.0.32"
 	}

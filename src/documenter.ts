@@ -17,11 +17,15 @@ export class Documenter {
 
 	run() {
 		if (vscode.workspace.rootPath) {
-			let files = util.walk(vscode.workspace.rootPath, this.config.include, this.config.exclude);
-			let policies = PolicyMap.fromFiles(files);
-			let pathResolver = (file: string) => vscode.Uri.file(this.context.asAbsolutePath(path.join("src/blob", file))).fsPath;
-			let renderer = new Renderer(this.config, pathResolver);
-			renderer.withPolicies(policies).save();
+			try {
+				let files = util.walk(vscode.workspace.rootPath, this.config.include, this.config.exclude);
+				let policies = PolicyMap.fromFiles(files);
+				let pathResolver = (file: string) => vscode.Uri.file(this.context.asAbsolutePath(path.join("src/blob", file))).fsPath;
+				let renderer = new Renderer(this.config, pathResolver);
+				renderer.withPolicies(policies).save();
+			} catch (e) {
+				vscode.window.showErrorMessage(e.message);
+			}
 		}
 	}
 }

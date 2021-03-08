@@ -10,6 +10,7 @@ export function activate(context: vscode.ExtensionContext) {
 		config.tryLoad(`${vscode.workspace.rootPath}/documenter.json`);
 		let documenter = new Documenter(config, context);
 		documenter.run();
+		vscode.window.showInformationMessage("Finished generating documentation");
 	});
 
 	context.subscriptions.push(disposable);
