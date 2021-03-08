@@ -22,12 +22,12 @@
 
   <div class="container-fluid h-100">
     <div class="row">
-      <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+      <nav class="col-md-2 d-none d-md-block sidebar">
         <div class="sidebar-sticky">
           <ul class="nav flex-column">
             {{#each policies}}
             <li class="nav-item">
-              <a class="nav-link active" href="#">
+              <a class="nav-link active" href="#{{idPrettify (indexer 'policyId')}}">
                 <span data-feather="file-text"></span>
                 {{idPrettify (indexer 'policyId')}}
               </a>
@@ -40,53 +40,100 @@
       <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 h-100 p-0">
         <div class="policyDocsContainer mx-auto w-50 p-3">
           {{#each policies}}
-          <h2><a href="#" class="link-secondary">{{idPrettify (indexer 'policyId')}}</a></h2>
-          <hr>
-          {{#if basePolicy}}
-          {{#with basePolicy}}
-          <h4>Base: <code>{{idPrettify (indexer 'policyId')}}</code></h3>
-          {{/with}}
-          {{else}}
-          <h4>No base</h3>
-          {{/if}}
-          {{#if claims}}
-          <h4>Claims:</h4>
-          <table class="table text-break text-wrap">
-            <thead class="text-wrap">
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col" class="text-nowrap">id</th>
-                <th scope="col" class="text-nowrap">dataType</th>
-              </tr>
-            </thead>
-            <tbody>
-              {{#each claims}}
-              <tr style="cursor: pointer" data-bs-toggle="modal" onclick="showModal('{{../safeId}}{{@index}}ClaimModal')">
-                <th scope="row" class="text-nowrap">{{@index}}</th>
-                <td class="text-nowrap">{{id}}</td>
-                <td>{{dataType}}</td>
-              </tr>
-              <div class="modal fade" id="{{../safeId}}{{@index}}ClaimModal" tabindex="-1" aria-labelledby="{{../safeId}}{{@index}}ClaimModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="{{../safeId}}{{@index}}ClaimModalLabel">Additional properties for '{{id}}'</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                      {{#if comments}}
-                      <h4>Comments</h4>
-                      <hr>
-                      <code>{{#each comments}}{{this}}<br>{{/each}}</code>
-                      {{/if}}
+          <div class="policyDoc">
+            <h3><a href="#" id="{{idPrettify (indexer 'policyId')}}" class="link-secondary">{{idPrettify (indexer 'policyId')}}</a></h3>
+            <hr>
+            {{#if basePolicy}}
+            <h5>Base: <code>{{basePolicy.safeId}}</code></h5>
+            {{else}}
+            <h5>No base defined</h5>
+            {{/if}}
+            {{#if userJourneys}}
+            <h5>User journeys</h5>
+            {{#each userJourneys}}
+            <b>{{id}}</b>
+            <table class="table text-break text-wrap table-hover">
+              <thead class="text-wrap">
+                <tr>
+                  <th scope="col">Step</th>
+                  <th scope="col">Comments</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each orchestrationSteps}}
+                <tr style="cursor: pointer" data-bs-toggle="modal" onclick="showModal('{{../safeId}}{{@index}}OrchestrationStepsModal')">
+                  <th scope="row" class="text-nowrap">{{@index}}</th>
+                  <td>
+                    {{#each comments}}
+                    {{this}}<br>
+                    {{/each}}
+                  </td>
+                </tr>
+                <div class="modal fade" id="{{../safeId}}{{@index}}OrchestrationStepsModal" tabindex="-1" aria-labelledby="{{../safeId}}{{@index}}OrchestrationStepsModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="{{../safeId}}{{@index}}OrchestrationStepsModalLabel">Additional properties for step {{@index}}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        {{#if comments}}
+                        <b>Comments</b>
+                        <hr>
+                        <code style="white-space: pre-line;">{{#each comments}}{{this}}<br><br>{{/each}}</code>
+                        {{/if}}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              {{/each}}
-            </tbody>
-          </table>
-          {{/if}}
+                {{/each}}
+              </tbody>
+            </table>
+            {{/each}}
+            {{else}}
+            <h5>No user journeys defined</h5>
+            {{/if}}
+            {{#if claims}}
+            <h5>Claims</h5>
+            <table class="table text-break text-wrap table-hover">
+              <thead class="text-wrap">
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col" class="text-nowrap">id</th>
+                  <th scope="col" class="text-nowrap">dataType</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each claims}}
+                <tr style="cursor: pointer" data-bs-toggle="modal" onclick="showModal('{{../safeId}}{{@index}}ClaimModal')">
+                  <th scope="row" class="text-nowrap">{{@index}}</th>
+                  <td class="text-nowrap">{{id}}</td>
+                  <td>{{dataType}}</td>
+                </tr>
+                <div class="modal fade" id="{{../safeId}}{{@index}}ClaimModal" tabindex="-1" aria-labelledby="{{../safeId}}{{@index}}ClaimModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="{{../safeId}}{{@index}}ClaimModalLabel">Additional properties for '{{id}}'</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        {{#if comments}}
+                        <b>Comments</b>
+                        <hr>
+                        <code style="white-space: pre-line;">{{#each comments}}{{this}}<br><br>{{/each}}</code>
+                        {{/if}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {{/each}}
+              </tbody>
+            </table>
+            {{else}}
+            <h5>No claims defined</h5>
+            {{/if}}
+          </div>
           {{/each}}
         </div>
       </main>
