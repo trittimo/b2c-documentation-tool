@@ -4,10 +4,12 @@ import * as vscode from 'vscode';
 export class Configuration {
 	exclude: Array<string>;
 	include: Array<string>;
+	out: string;
 
 	constructor() {
 		this.exclude = [];
 		this.include = [];
+		this.out = "docs";
 	}
 
 	tryLoad(path: string) {
@@ -24,6 +26,9 @@ export class Configuration {
 					config["include"].forEach((i: string) => {
 						this.include.push(i);
 					});
+				}
+				if ("out" in config && typeof(config["out"]) === "string") {
+					this.out = config["out"];
 				}
 			} catch {
 				vscode.window.showErrorMessage(`${path} is not a valid JSON file or it has invalid properties for configuration`);

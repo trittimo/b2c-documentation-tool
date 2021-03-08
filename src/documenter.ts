@@ -1,27 +1,27 @@
 import * as vscode from 'vscode';
 import { Configuration } from './configuration';
+import * as path from 'path';
 
 import * as util from './util';
-import { PolicyTree } from './policy-tree';
+import { PolicyMap } from './policy-map';
+import { Renderer } from './renderer';
 
 export class Documenter {
 	config: Configuration;
+	context: vscode.ExtensionContext;
 
-	constructor(config: Configuration) {
+	constructor(config: Configuration, context: vscode.ExtensionContext) {
 		this.config = config;
+		this.context = context;
 	}
 
 	run() {
 		if (vscode.workspace.rootPath) {
 			let files = util.walk(vscode.workspace.rootPath, this.config.include, this.config.exclude);
-			let tree = PolicyTree.fromFiles(files);
-			for (let key of tree.policies.keys()) {
-				let policy = tree.policies.get(key);
-				if (!policy) continue;
-				console.log(key);
-				console.log(policy.claimsTransformations);
-				console.log("===");
-			}
+			let policies = PolicyMap.fromFiles(files);
+			let pathResolver = (file: string) => vscode.Uri.file(this.context.asAbsolutePath(path.join("src/blob", file))).fsPath;
+			let renderer = new Renderer(this.config, pathResolver);
+			renderer.withPolicies(policies).save();
 		}
 	}
 }

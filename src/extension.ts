@@ -8,7 +8,7 @@ export function activate(context: vscode.ExtensionContext) {
 	let disposable = vscode.commands.registerCommand('b2c-documentation-tool.run', () => {
 		let config = new Configuration();
 		config.tryLoad(`${vscode.workspace.rootPath}/documenter.json`);
-		let documenter = new Documenter(config);
+		let documenter = new Documenter(config, context);
 		documenter.run();
 	});
 

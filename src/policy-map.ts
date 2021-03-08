@@ -95,13 +95,8 @@ export class Policy {
 	}
 }
 
-export class PolicyTree {
-	policies: Map<string, Policy>;
-	constructor(policies: Map<string, Policy>) {
-		this.policies = policies;
-	}
-
-	static fromFiles(files: Array<string>): PolicyTree {
+export class PolicyMap {
+	static fromFiles(files: Array<string>): Map<string, Policy> {
 		let parser = new xmldom.DOMParser();
 		let policies: Map<string, Policy> = new Map();
 		for (let i = 0; i < files.length; i++) {
@@ -117,6 +112,6 @@ export class PolicyTree {
 				vscode.window.showErrorMessage(e.message);
 			}
 		}
-		return new PolicyTree(policies);
+		return policies;
 	}
 }
